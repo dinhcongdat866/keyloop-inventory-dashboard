@@ -4,8 +4,8 @@ import { getInventory } from '@/lib/api/inventory';
 export const inventoryQueryKey = (dealershipId: string) =>
   ['inventory', dealershipId] as const;
 
-const STALE_TIME_MS = 60_000;
-const POLL_INTERVAL_MS = 60_000;
+const STALE_TIME_MS = 30_000;
+const POLL_INTERVAL_MS = 5 * 60_000;
 
 export function useInventory(dealershipId: string) {
   return useQuery({

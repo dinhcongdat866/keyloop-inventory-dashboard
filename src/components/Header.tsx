@@ -1,6 +1,6 @@
-import { formatDistanceToNow } from 'date-fns';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useRelativeTime } from '@/hooks/useRelativeTime';
 import { cn } from '@/lib/utils';
 
 type HeaderProps = {
@@ -18,9 +18,7 @@ export function Header({
   onRefresh,
   rightSlot,
 }: HeaderProps) {
-  const lastUpdated = fetchedAt
-    ? formatDistanceToNow(new Date(fetchedAt), { addSuffix: true })
-    : null;
+  const lastUpdated = useRelativeTime(fetchedAt);
 
   return (
     <header className="border-b bg-card">
