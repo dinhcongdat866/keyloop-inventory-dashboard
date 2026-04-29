@@ -1,8 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Header } from '@/components/Header';
 import { SummaryCards } from '@/components/SummaryCards';
 import { FiltersBar } from '@/components/FiltersBar';
 import { InventoryList } from '@/components/InventoryList';
+import { ActionsModal } from '@/components/ActionsModal';
+import { AgingPolicySettings } from '@/components/AgingPolicySettings';
+import { Toaster } from '@/components/ui/sonner';
 import { useInventory } from '@/hooks/useInventory';
 import { useFilters } from '@/hooks/useFilters';
 import { useAgingPolicy } from '@/hooks/useAgingPolicy';
@@ -17,8 +20,10 @@ const DEALERSHIP_ID = 'dealer-001';
 export default function App() {
   const { data, isLoading, isFetching, error, refetch } = useInventory(DEALERSHIP_ID);
   const { filters, updateFilter, clearFilters } = useFilters();
-  const { policy } = useAgingPolicy();
+  const { policy, setPolicy, resetPolicy } = useAgingPolicy();
   const today = useToday();
+
+  const [selectedCarId, setSelectedCarId] = useState<string | null>(null);
 
   const enriched = useMemo(
     () => (data ? enrichCars(data.cars, policy, today) : []),
@@ -29,10 +34,10 @@ export default function App() {
   const sorted = useMemo(() => applySort(filtered, filters.sortBy), [filtered, filters.sortBy]);
   const stats = useMemo(() => computeStats(enriched), [enriched]);
 
-  const handleOpenActions = (carId: string) => {
-    // TODO: wire ActionsModal in next step
-    console.info('open actions', carId);
-  };
+  const selectedCar = useMemo(
+    () => (selectedCarId ? enriched.find((c) => c.id === selectedCarId) ?? null : null),
+    [enriched, selectedCarId]
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,6 +46,13 @@ export default function App() {
         fetchedAt={data?.fetchedAt}
         isFetching={isFetching}
         onRefresh={() => void refetch()}
+        rightSlot={
+          <AgingPolicySettings
+            policy={policy}
+            setPolicy={setPolicy}
+            resetPolicy={resetPolicy}
+          />
+        }
       />
 
       <main className="mx-auto max-w-7xl space-y-4 px-4 py-4 md:px-6">
@@ -60,12 +72,23 @@ export default function App() {
           totalCount={enriched.length}
           isLoading={isLoading}
           error={error}
-          onOpenActions={handleOpenActions}
+          onOpenActions={setSelectedCarId}
           onClearFilters={clearFilters}
           onRetry={() => void refetch()}
           searchTerm={filters.search}
         />
       </main>
+
+      <ActionsModal
+        car={selectedCar}
+        dealershipId={DEALERSHIP_ID}
+        open={selectedCarId !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedCarId(null);
+        }}
+      />
+
+      <Toaster richColors position="top-right" />
     </div>
   );
 }
