@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import { FiltersBar } from '@/components/FiltersBar';
 import type { FilterState } from '@/types/filters';
 import type { EnrichedCar } from '@/types/aging';
@@ -39,7 +39,6 @@ function renderBar(
 describe('FiltersBar', () => {
   it('displays result count correctly', () => {
     renderBar({}, { resultCount: 42, totalCount: 250 });
-    // resultCount is in its own <span>; totalCount is inline text in the <p>
     expect(screen.getByText('42')).toBeInTheDocument();
     const summary = screen.getByText(/Showing/i);
     expect(summary.textContent).toContain('250');
@@ -50,13 +49,14 @@ describe('FiltersBar', () => {
     expect(screen.queryByRole('button', { name: /clear/i })).toBeNull();
   });
 
-  it('shows Clear button when search is active', () => {
-    renderBar({ search: 'toyota' });
-    expect(screen.getByRole('button', { name: /^clear$/i })).toBeInTheDocument();
-  });
-
-  it('shows Clear button when agingOnly is active', () => {
-    renderBar({ agingOnly: true });
+  it.each([
+    [{ search: 'toyota' }],
+    [{ agingOnly: true }],
+    [{ makes: ['Toyota'] }],
+    [{ hasActionsOnly: true }],
+    [{ years: [2024] }],
+  ])('shows Clear button when filters are dirty: %o', (overrides) => {
+    renderBar(overrides as Partial<FilterState>);
     expect(screen.getByRole('button', { name: /^clear$/i })).toBeInTheDocument();
   });
 
@@ -71,8 +71,8 @@ describe('FiltersBar', () => {
     expect(screen.getByRole('searchbox', { name: /search inventory/i })).toBeInTheDocument();
   });
 
-  it('renders "Aging only" checkbox label', () => {
+  it('renders "Aging only" checkbox', () => {
     renderBar();
-    expect(screen.getByText(/aging only/i)).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /aging only/i })).toBeInTheDocument();
   });
 });
