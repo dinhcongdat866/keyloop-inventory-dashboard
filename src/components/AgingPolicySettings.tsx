@@ -12,27 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-
-type FieldErrors = Partial<Record<keyof AgingPolicy, string>>;
-
-function validate(p: AgingPolicy): FieldErrors {
-  const errors: FieldErrors = {};
-  const { min, max } = AGING_POLICY_BOUNDS;
-
-  for (const key of ['approachingDays', 'agingDays', 'criticalDays'] as const) {
-    const v = p[key];
-    if (!Number.isInteger(v) || v < min || v > max) {
-      errors[key] = `Must be an integer between ${min} and ${max}`;
-    }
-  }
-  if (!errors.agingDays && !errors.approachingDays && p.agingDays <= p.approachingDays) {
-    errors.agingDays = 'Must be greater than Approaching';
-  }
-  if (!errors.criticalDays && !errors.agingDays && p.criticalDays <= p.agingDays) {
-    errors.criticalDays = 'Must be greater than Aging';
-  }
-  return errors;
-}
+import { validateAgingPolicy, type FieldErrors } from '@/lib/inventory/agingPolicy';
 
 type AgingPolicySettingsProps = {
   policy: AgingPolicy;
@@ -47,7 +27,7 @@ export function AgingPolicySettings({
 }: AgingPolicySettingsProps) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<AgingPolicy>(policy);
-  const errors = validate(draft);
+  const errors = validateAgingPolicy(draft);
   const hasErrors = Object.keys(errors).length > 0;
 
   // Re-sync draft when popover opens (in case external change)

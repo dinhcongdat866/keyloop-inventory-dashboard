@@ -18,19 +18,20 @@ export function SearchInput({
   debounceMs,
 }: SearchInputProps) {
   const [local, setLocal] = useState(value);
+  const [prevValue, setPrevValue] = useState(value);
   const debounced = useDebouncedValue(local, debounceMs);
+
+  // Reset local when external value clears (e.g. "clear filters")
+  if (prevValue !== value) {
+    setPrevValue(value);
+    if (value === '') setLocal('');
+  }
 
   // Push debounced changes upstream
   useEffect(() => {
     if (debounced !== value) onChange(debounced);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounced]);
-
-  // Allow external resets (e.g. clear filters) to update local state
-  useEffect(() => {
-    if (value !== local && value === '') setLocal('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
 
   return (
     <div className="relative w-full md:max-w-xs">
