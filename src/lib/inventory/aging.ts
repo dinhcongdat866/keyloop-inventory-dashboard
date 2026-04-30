@@ -2,6 +2,7 @@ import type { Car } from '@/types/vehicle';
 import type { AgingPolicy, AgingTier, EnrichedCar } from '@/types/aging';
 import type { ActionLog } from '@/types/action';
 import { daysBetweenUtc } from '@/lib/utils/date';
+import { logger } from '@/lib/observability/logger';
 
 export function computeDaysInStock(importedDateIso: string, nowIso: string): number {
   return daysBetweenUtc(importedDateIso, nowIso);
@@ -31,6 +32,12 @@ function pickLatestAction(logs: ActionLog[]): ActionLog | undefined {
 
 export function enrichCar(car: Car, policy: AgingPolicy, nowIso: string): EnrichedCar {
   const daysInStock = computeDaysInStock(car.importedDate, nowIso);
+  if (daysInStock === 0 && Date.parse(car.importedDate) > Date.parse(nowIso)) {
+    logger.warn('Future importedDate detected, daysInStock clamped to 0', {
+      carId: car.id,
+      importedDate: car.importedDate,
+    });
+  }
   const agingTier = computeAgingTier(daysInStock, policy);
   return {
     ...car,

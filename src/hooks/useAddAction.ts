@@ -4,6 +4,7 @@ import type { AddActionRequest, GetInventoryResponse } from '@/types/api';
 import type { ActionLog } from '@/types/action';
 import { inventoryQueryKey } from './useInventory';
 import { nowIsoUtc } from '@/lib/utils/date';
+import { logger } from '@/lib/observability/logger';
 
 type Variables = {
   dealershipId: string;
@@ -80,7 +81,8 @@ export function useAddAction() {
       return { previous, tempId };
     },
 
-    onError: (_err, { dealershipId }, context) => {
+    onError: (err, { dealershipId, carId }, context) => {
+      logger.error('addAction failed', { carId, message: err.message });
       if (context?.previous) {
         queryClient.setQueryData(inventoryQueryKey(dealershipId), context.previous);
       }

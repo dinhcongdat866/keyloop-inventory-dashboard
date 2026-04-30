@@ -1,4 +1,5 @@
 import type { ApiError } from '@/types/api';
+import { logger } from '@/lib/observability/logger';
 
 export const API_BASE = '/api';
 
@@ -36,7 +37,9 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
   });
 
   if (!response.ok) {
-    throw await parseError(response);
+    const err = await parseError(response);
+    logger.error('API request failed', { path, status: err.status, code: err.code });
+    throw err;
   }
 
   return (await response.json()) as T;
