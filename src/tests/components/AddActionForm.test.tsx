@@ -67,6 +67,18 @@ describe('AddActionForm', () => {
     expect(mockMutate).not.toHaveBeenCalled();
   });
 
+  it('calls onSuccess prop when mutation succeeds', async () => {
+    mockMutate.mockImplementationOnce((_vars: unknown, callbacks: { onSuccess?: () => void }) => {
+      callbacks?.onSuccess?.();
+    });
+    const onSuccess = vi.fn();
+    renderForm({ onSuccess });
+    await userEvent.click(screen.getByRole('button', { name: /save action/i }));
+    await waitFor(() => {
+      expect(onSuccess).toHaveBeenCalledOnce();
+    });
+  });
+
   it('does not show validation error for note within 500 characters', async () => {
     renderForm();
     const textarea = screen.getByLabelText(/note/i);
