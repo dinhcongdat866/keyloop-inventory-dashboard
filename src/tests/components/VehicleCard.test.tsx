@@ -28,7 +28,7 @@ function makeCar(overrides: Partial<EnrichedCar> = {}): EnrichedCar {
 }
 
 describe('VehicleCard', () => {
-  let onOpenActions: ReturnType<typeof vi.fn>;
+  let onOpenActions: (carId: string) => void;
 
   beforeEach(() => {
     onOpenActions = vi.fn();
@@ -52,8 +52,7 @@ describe('VehicleCard', () => {
   });
 
   it('does not render AlertTriangle icon for HEALTHY tier', () => {
-    const { container } = render(<VehicleCard car={makeCar({ agingTier: 'HEALTHY' })} onOpenActions={onOpenActions} />);
-    // AlertTriangle is only injected for AGING/CRITICAL — check no SVG inside the badge span
+    render(<VehicleCard car={makeCar({ agingTier: 'HEALTHY' })} onOpenActions={onOpenActions} />);
     const badge = screen.getByLabelText(/Healthy/i);
     expect(badge.querySelector('svg')).toBeNull();
   });
@@ -64,7 +63,7 @@ describe('VehicleCard', () => {
     );
     const marks = container.querySelectorAll('mark');
     expect(marks.length).toBeGreaterThan(0);
-    expect(marks[0]!.textContent!.toLowerCase()).toBe('toyo');
+    expect(marks[0]).toHaveTextContent(/toyo/i);
   });
 
   it('does not render <mark> when no search term', () => {
@@ -95,5 +94,6 @@ describe('VehicleCard', () => {
     });
     render(<VehicleCard car={car} onOpenActions={onOpenActions} />);
     expect(screen.getByRole('button', { name: /view \(2\)/i })).toBeInTheDocument();
+    expect(screen.getByText(/transfer to branch/i)).toBeInTheDocument();
   });
 });
