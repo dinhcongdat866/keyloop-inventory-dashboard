@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { AgingPolicy } from '@/types/aging';
 import { AGING_POLICY_STORAGE_KEY, DEFAULT_AGING_POLICY } from '@/constants/aging';
 
@@ -29,8 +29,8 @@ export function useAgingPolicy() {
     localStorage.setItem(AGING_POLICY_STORAGE_KEY, JSON.stringify(policy));
   }, [policy]);
 
-  const setPolicy = useCallback((next: AgingPolicy) => setPolicyState(next), []);
-  const resetPolicy = useCallback(() => setPolicyState(DEFAULT_AGING_POLICY), []);
+  const setPolicy = (next: AgingPolicy) => setPolicyState(next);
+  const resetPolicy = () => setPolicyState(DEFAULT_AGING_POLICY);
 
   return { policy, setPolicy, resetPolicy };
 }

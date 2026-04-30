@@ -7,8 +7,15 @@ export function useRelativeTime(iso?: string, intervalMs = 10_000): string | nul
   const [now, setNow] = useState<Date>(() => new Date());
 
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), intervalMs);
-    return () => clearInterval(id);
+    const tick = () => setNow(new Date());
+    document.addEventListener('visibilitychange', tick);
+    window.addEventListener('focus', tick);
+    const id = setInterval(tick, intervalMs);
+    return () => {
+      document.removeEventListener('visibilitychange', tick);
+      window.removeEventListener('focus', tick);
+      clearInterval(id);
+    };
   }, [intervalMs]);
 
   if (!iso) return null;
