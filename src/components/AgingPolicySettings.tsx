@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { validateAgingPolicy, type FieldErrors } from '@/lib/inventory/agingPolicy';
+import { validateAgingPolicy } from '@/lib/inventory/agingPolicy';
 
 type AgingPolicySettingsProps = {
   policy: AgingPolicy;
