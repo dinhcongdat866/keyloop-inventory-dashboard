@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -14,23 +14,25 @@ type SearchInputProps = {
 export function SearchInput({
   value,
   onChange,
-  placeholder = 'Search VIN, make, model, trim…',
+  placeholder = 'Search VIN, trim…',
   debounceMs,
 }: SearchInputProps) {
   const [local, setLocal] = useState(value);
   const [prevValue, setPrevValue] = useState(value);
   const debounced = useDebouncedValue(local, debounceMs);
 
-  // Reset local when external value clears (e.g. "clear filters")
+  // Reset local when external value clears (e.g. "clear filters").
+  // One-directional by design: this component owns the in-progress typing state.
   if (prevValue !== value) {
     setPrevValue(value);
     if (value === '') setLocal('');
   }
 
-  // Push debounced changes upstream
+  const latestRef = useRef({ onChange, value });
+  useLayoutEffect(() => { latestRef.current = { onChange, value }; });
+
   useEffect(() => {
-    if (debounced !== value) onChange(debounced);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (debounced !== latestRef.current.value) latestRef.current.onChange(debounced);
   }, [debounced]);
 
   return (

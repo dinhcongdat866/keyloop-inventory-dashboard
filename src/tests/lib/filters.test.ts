@@ -51,9 +51,9 @@ describe('applyFilters — search', () => {
     expect(r[0]!.id).toBe('2');
   });
 
-  it('matches by model name', () => {
+  it('does not match by model — model has its own MultiSelect filter', () => {
     const r = applyFilters(cars, { ...INITIAL_FILTERS, search: 'camry' });
-    expect(r.map((c) => c.id)).toEqual(['1', '3']);
+    expect(r).toHaveLength(0);
   });
 
   it('matches by trim', () => {
@@ -62,9 +62,9 @@ describe('applyFilters — search', () => {
     expect(r[0]!.id).toBe('3');
   });
 
-  it('matches by make', () => {
+  it('does not match by make — make has its own MultiSelect filter', () => {
     const r = applyFilters(cars, { ...INITIAL_FILTERS, search: 'honda' });
-    expect(r).toHaveLength(1);
+    expect(r).toHaveLength(0);
   });
 
   it('treats whitespace-only search as empty', () => {

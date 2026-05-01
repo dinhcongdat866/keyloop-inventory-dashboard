@@ -108,7 +108,7 @@ export function InventoryList({
   searchTerm,
 }: InventoryListProps) {
   if (isLoading && cars.length === 0) return <LoadingSkeleton />;
-  if (error && cars.length === 0) return <ErrorState error={error} onRetry={onRetry} />;
+  if (error && totalCount === 0) return <ErrorState error={error} onRetry={onRetry} />;
   if (cars.length === 0) {
     return <EmptyState totalCount={totalCount} onClearFilters={onClearFilters} />;
   }

@@ -8,8 +8,6 @@ function matchesSearch(car: EnrichedCar, search: string): boolean {
   if (!q) return true;
   return (
     car.vin.toLowerCase().includes(q) ||
-    car.make.toLowerCase().includes(q) ||
-    car.model.toLowerCase().includes(q) ||
     (car.trim?.toLowerCase().includes(q) ?? false)
   );
 }
