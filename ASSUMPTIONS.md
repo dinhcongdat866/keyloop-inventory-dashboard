@@ -1,6 +1,6 @@
 # Assumptions
 
-Decisions where the brief was ambiguous, in one line each. The reasoning lives in `[SDD.md §3]`(./SDD.md#3-requirements-interpretation).
+Decisions where the brief was ambiguous, in one line each. The reasoning lives in [SDD.md §3](./SDD.md#3-requirements-interpretation).
 
 ## Scope
 

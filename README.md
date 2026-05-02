@@ -7,8 +7,8 @@ A dashboard for dealership managers to view stock, identify aging vehicles (>90 
 
 **Companion documents:**
 
-- `[SDD.md](./SDD.md)` — system design, architecture, data flow, observability, GenAI usage in design.
-- `[ASSUMPTIONS.md](./ASSUMPTIONS.md)` — interpretations of ambiguous requirements.
+- [SDD.md](./SDD.md) — system design, architecture, data flow, observability, GenAI usage in design.
+- [ASSUMPTIONS.md](./ASSUMPTIONS.md) — interpretations of ambiguous requirements.
 
 ---
 
@@ -50,9 +50,9 @@ npm run lint         # eslint
 
 ## Architecture
 
-The business logic — aging classification, filtering, sorting, stats, policy validation — lives in `src/lib/inventory/` as pure functions. React hooks under `src/hooks/` wrap that logic plus TanStack Query for the read path and an optimistic mutation for the write path. Components under `src/components/` are mostly presentational and consume derived data from `App.tsx`. MSW intercepts `/api/`* in dev only (dynamic import gated on `import.meta.env.DEV`, so it's tree-shaken from production). Same fetch code runs against MSW today and a real backend tomorrow without changes.
+The business logic — aging classification, filtering, sorting, stats, policy validation — lives in `src/lib/inventory/` as pure functions. React hooks under `src/hooks/` wrap that logic plus TanStack Query for the read path and an optimistic mutation for the write path. Components under `src/components/` are mostly presentational and consume derived data from `App.tsx`. MSW intercepts `/api/*` in dev only (dynamic import gated on `import.meta.env.DEV`, so it's tree-shaken from production). Same fetch code runs against MSW today and a real backend tomorrow without changes.
 
-Full diagram and reasoning in `[SDD.md](./SDD.md)`.
+Full diagram and reasoning in [SDD.md](./SDD.md).
 
 ```
 src/
@@ -81,12 +81,12 @@ npm run test:run
 
 **81 tests across 8 files.** The split:
 
-- `tests/lib/`* — exhaustive coverage of the pure logic (aging tiers, filter combinations, sort orders, stats, policy validation).
-- `tests/components/`* — interaction-level tests for `VehicleCard`, `FiltersBar`, `AddActionForm` (dirty state, label rendering, submission, search highlighting invariants).
+- `tests/lib/*` — exhaustive coverage of the pure logic (aging tiers, filter combinations, sort orders, stats, policy validation).
+- `tests/components/*` — interaction-level tests for `VehicleCard`, `FiltersBar`, `AddActionForm` (dirty state, label rendering, submission, search highlighting invariants).
 
 Why this shape: pure-function tests are cheap and catch the correctness regressions that matter; component tests are reserved for behaviours the pure tests can't see.
 
-E2E (Playwright happy path) is deliberately deferred — see `[ASSUMPTIONS.md](./ASSUMPTIONS.md)`.
+E2E (Playwright happy path) is deliberately deferred — see [ASSUMPTIONS.md](./ASSUMPTIONS.md).
 
 ---
 
@@ -99,7 +99,7 @@ GET  /api/dealerships/:dealershipId/inventory
 POST /api/dealerships/:dealershipId/cars/:carId/actions
 ```
 
-Full request/response schemas in `[SDD.md §6](./SDD.md#6-api-contract)`.
+Full request/response schemas in [SDD.md §6](./SDD.md#6-api-contract).
 
 ---
 
