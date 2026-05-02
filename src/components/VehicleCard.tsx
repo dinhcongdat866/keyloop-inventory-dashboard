@@ -109,9 +109,7 @@ export function VehicleCard({ car, onOpenActions, searchTerm }: VehicleCardProps
 
         <div className="min-w-0">
           <h3 className="truncate text-base font-semibold">
-            {car.year}{' '}
-            <Searchable text={car.make} query={searchTerm} />{' '}
-            <Searchable text={car.model} query={searchTerm} />
+            {car.year} {car.make} {car.model}
             {car.trim && (
               <span className="text-muted-foreground">
                 {' · '}

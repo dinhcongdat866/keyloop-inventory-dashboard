@@ -57,13 +57,37 @@ describe('VehicleCard', () => {
     expect(badge.querySelector('svg')).toBeNull();
   });
 
-  it('highlights search term with <mark> element', () => {
+  it('highlights matching VIN substring with <mark> element', () => {
     const { container } = render(
-      <VehicleCard car={makeCar()} onOpenActions={onOpenActions} searchTerm="toyo" />
+      <VehicleCard
+        car={makeCar({ vin: 'VIN0000ABC000001' })}
+        onOpenActions={onOpenActions}
+        searchTerm="abc"
+      />
     );
     const marks = container.querySelectorAll('mark');
     expect(marks.length).toBeGreaterThan(0);
-    expect(marks[0]).toHaveTextContent(/toyo/i);
+    expect(marks[0]).toHaveTextContent(/abc/i);
+  });
+
+  it('highlights matching trim substring with <mark> element', () => {
+    const { container } = render(
+      <VehicleCard
+        car={makeCar({ trim: 'XLE' })}
+        onOpenActions={onOpenActions}
+        searchTerm="xle"
+      />
+    );
+    const marks = container.querySelectorAll('mark');
+    expect(marks.length).toBeGreaterThan(0);
+    expect(marks[0]).toHaveTextContent(/xle/i);
+  });
+
+  it('does not highlight make/model — they are filtered via MultiSelect, not search', () => {
+    const { container } = render(
+      <VehicleCard car={makeCar()} onOpenActions={onOpenActions} searchTerm="toyota" />
+    );
+    expect(container.querySelectorAll('mark')).toHaveLength(0);
   });
 
   it('does not render <mark> when no search term', () => {
