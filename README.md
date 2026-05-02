@@ -37,6 +37,7 @@ npm run lint         # eslint
 ---
 
 ## Features
+<img width="2020" height="1916" alt="image" src="https://github.com/user-attachments/assets/5fcd870f-ac8a-444f-b5a8-e33f82adab46" />
 
 - **Inventory list** — filterable by make, model, year, days-in-stock range, aging-only, has-action-only; sortable by aging priority, days, price, or recent action.
 - **Aging detection** — configurable 3-tier policy (`APPROACHING` / `AGING` / `CRITICAL`) with sensible defaults (60/90/120 days) and presets for new / used / luxury vehicles. The brief's ">90 days" maps to `AGING` and above.
