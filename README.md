@@ -7,6 +7,7 @@ A dashboard for dealership managers to view stock, identify aging vehicles (>90 
 
 Demo video:
 https://www.loom.com/share/dd2917d772e44d01a60a42c1e9c324ed
+
 **Companion documents:**
 
 - [SDD.md](./SDD.md) — system design, architecture, data flow, observability, GenAI usage in design.
